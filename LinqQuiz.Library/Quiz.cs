@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 
 namespace LinqQuiz.Library
 {
@@ -16,7 +17,8 @@ namespace LinqQuiz.Library
         /// </exception>
         public static int[] GetEvenNumbers(int exclusiveUpperLimit)
         {
-            throw new NotImplementedException();
+            return exclusiveUpperLimit <= 0 ? throw new ArgumentOutOfRangeException() :
+                Enumerable.Range(1, exclusiveUpperLimit -1).Where(n => n % 2 == 0).ToArray();
         }
 
         /// <summary>
@@ -33,7 +35,12 @@ namespace LinqQuiz.Library
         /// </remarks>
         public static int[] GetSquares(int exclusiveUpperLimit)
         {
-            throw new NotImplementedException();
+            return Math.Pow(exclusiveUpperLimit, 2) > int.MaxValue ? throw new OverflowException() : 
+                Enumerable.Range(1, (exclusiveUpperLimit < 0 ? 0 : exclusiveUpperLimit -1))
+                .Where(n => n%7==0)
+                .Select(n => (int)Math.Pow(n,2))
+                .OrderByDescending(n=>n)
+                .ToArray();
         }
 
         /// <summary>
@@ -52,7 +59,11 @@ namespace LinqQuiz.Library
         /// </remarks>
         public static FamilySummary[] GetFamilyStatistic(IReadOnlyCollection<IFamily> families)
         {
-            throw new NotImplementedException();
+            return families == null ? throw new ArgumentNullException() :
+                families.Select(f => new FamilySummary
+                {
+                    FamilyID = f.ID, NumberOfFamilyMembers = f.Persons.Count, AverageAge = f.Persons.Count != 0 ? f.Persons.Average(n => n.Age) : 0
+                }).ToArray() ;
         }
 
         /// <summary>
@@ -70,7 +81,8 @@ namespace LinqQuiz.Library
         /// </remarks>
         public static (char letter, int numberOfOccurrences)[] GetLetterStatistic(string text)
         {
-            throw new NotImplementedException();
+            return text.ToUpper().Trim().Where(n => char.IsLetter(n)).ToArray().GroupBy(m => m).Select(m => (m.Key, m.Count())).ToArray();
+
         }
     }
 }
